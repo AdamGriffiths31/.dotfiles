@@ -4,6 +4,7 @@ lsp.preset("recommended")
 
 lsp.ensure_installed({
   'gopls',
+  'tsserver',
 })
 
 -- Fix Undefined global 'vim'
