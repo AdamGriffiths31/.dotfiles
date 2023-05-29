@@ -20,3 +20,17 @@ keymap("n", "<C-h>", "<C-w>h", opts)
 keymap("n", "<C-j>", "<C-w>j", opts)
 keymap("n", "<C-k>", "<C-w>k", opts)
 keymap("n", "<C-l>", "<C-w>l", opts)
+
+-- Exit on jj and jk
+keymap("n", "j", "gj", opts)
+keymap("n", "k", "gk", opts)
+keymap("i", "jj", "<ESC>", opts)
+keymap("i", "jk", "<ESC>", opts)
+
+-- Fast saving
+keymap("n", "<Leader>w", ":write!<CR>", opts)
+keymap("n", "<Leader>q", ":q!<CR>", opts)
+
+-- Visually select lines, and move them up/down
+keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
+keymap("v", "K", ":m '<-2<CR>gv=gv", opts)

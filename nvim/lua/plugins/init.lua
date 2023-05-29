@@ -5,6 +5,7 @@ local Plugins = {
   {'fatih/vim-go'},
   {'mbbill/undotree'},
   {'kyazdani42/nvim-tree.lua'},
+  {'nvim-lualine/lualine.nvim'},
   {
 	'nvim-telescope/telescope.nvim', tag = '0.1.1',
 	-- or                              , branch = '0.1.1',
