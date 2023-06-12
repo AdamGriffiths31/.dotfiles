@@ -32,7 +32,9 @@ function Plugin.init()
 
   -- See :help vim.diagnostic.config()
   vim.diagnostic.config({
-    virtual_text = false,
+    virtual_text = {
+        prefix = "✘"
+    },
     severity_sort = true,
     float = {
       border = 'rounded',
