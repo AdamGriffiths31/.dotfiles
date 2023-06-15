@@ -91,6 +91,14 @@ function Plugin.config()
       require('plugins.lsp.lua_ls')
     end
   })
+  
+  lspconfig.rust_analyzer.setup{
+  	capabilities = capabilities,
+  	on_attach = on_attach,
+  	cmd = {
+  	"rustup","run","stable","rust-analyzer"
+  	}
+  }
 end
 
 function user.setup_mason()
