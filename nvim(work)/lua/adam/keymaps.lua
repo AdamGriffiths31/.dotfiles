@@ -34,3 +34,6 @@ keymap("n", "<Leader>q", ":q!<CR>", opts)
 -- Visually select lines, and move them up/down
 keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
 keymap("v", "K", ":m '<-2<CR>gv=gv", opts)
+
+-- Open a new vertical split terminal
+keymap('n', '<Leader>t', ':split term://$SHELL | resize 10<CR>', { noremap = true, silent = true })
