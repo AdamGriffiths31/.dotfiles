@@ -5,9 +5,11 @@ end
 
 load('adam.settings')
 load('adam.keymaps')
+load('adam.goTest')
 load('plugins.telescope')
 load('plugins.lsp')
 load('plugins.cmp')
+load('plugins.treesitter')
 
 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]
