@@ -6,6 +6,7 @@ end
 load('adam.settings')
 load('adam.keymaps')
 load('adam.goTest')
+load('adam.goLint')
 load('plugins.telescope')
 load('plugins.lsp')
 load('plugins.cmp')
