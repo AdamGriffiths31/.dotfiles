@@ -61,6 +61,7 @@ local ns = vim.api.nvim_create_namespace "live-tests"
 local group = vim.api.nvim_create_augroup("Adam", { clear = true })
 
 local attach_to_buffer = function(bufnr, command)
+    --vim.api.nvim_command('echom "attach_to_buffer called."')
     local state = {
         bufnr = bufnr,
         tests = {},
@@ -77,7 +78,6 @@ local attach_to_buffer = function(bufnr, command)
     end, {})
 
     vim.api.nvim_buf_clear_namespace(bufnr, ns, 0, -1)
-
     state = {
         bufnr = bufnr,
         tests = {},
@@ -87,13 +87,15 @@ local attach_to_buffer = function(bufnr, command)
         stdout_buffered = true,
         on_stdout = function(_, data)
             if not data then
+                vim.api.nvim_command('No data"')
                 return
             end
 
             for _, line in ipairs(data) do
+            -- vim.notify("Line: " .. line, "info", {}) -- Print the length of data received
+            if line and line ~= "" then
                 local decoded = vim.json.decode(line)
-                if decoded == nil then
-                else
+                if decoded then
                     if decoded.Action == "run" then
                         add_golang_test(state, decoded)
                     elseif decoded.Action == "output" then
@@ -116,6 +118,7 @@ local attach_to_buffer = function(bufnr, command)
                     else
                         error("Failed to handle" .. vim.inspect(data))
                     end
+                end
                 end
             end
         end,
@@ -146,6 +149,7 @@ end
 vim.api.nvim_create_user_command("GoTest", function()
     local current_file = vim.api.nvim_buf_get_name(vim.api.nvim_get_current_buf())
     local current_directory = vim.fn.fnamemodify(current_file, ":h")
+    --vim.notify("current_directory: " .. current_directory, "info", {}) -- Print the length of data received  --
     --TODO is this a hack or really good?
     attach_to_buffer(vim.api.nvim_get_current_buf(), { "go", "test", current_directory, "-v", "-json" })
 end, {})
