@@ -9,8 +9,8 @@ local keymap = vim.api.nvim_set_keymap
 vim.g.mapleader = " "
 
 -- Basic clipboard interaction
-vim.keymap.set({'n', 'x'}, 'cp', '"+y')
-vim.keymap.set({'n', 'x'}, 'cv', '"+p')
+vim.keymap.set({'n', 'x'}, '<C-c>', '"*y')
+vim.keymap.set({'n', 'x'}, '<C-p>', '"*p')
 
 -- Navigation
 vim.keymap.set("n","<leader>pv", vim.cmd.Ex)
