@@ -12,6 +12,7 @@ load('plugins.lsp')
 load('plugins.cmp')
 load('plugins.treesitter')
 load('plugins.nvimDap')
+load('plugins.fugitive')
 
 vim.cmd.colorscheme "catppuccin"
 
