@@ -36,4 +36,7 @@ keymap("v", "J", ":m '>+1<CR>gv=gv", opts)
 keymap("v", "K", ":m '<-2<CR>gv=gv", opts)
 
 -- Open a new vertical split terminal
-keymap('n', '<Leader>t', ':split term://$SHELL | resize 10<CR>', { noremap = true, silent = true })
+keymap('n', '<Leader>vt', ':vsplit term://$SHELL <CR>', opts)
+keymap('n', '<Leader>t', ':split term://$SHELL | resize 10<CR>', opts)
+
+keymap('n', '<C-f>', '<cmd>silent !tmux neww tmux-sessionizer<CR>',opts)
