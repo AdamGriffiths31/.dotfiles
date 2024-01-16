@@ -1,26 +1,9 @@
-local Plugin = {'hrsh7th/nvim-cmp'}
 
-Plugin.dependencies = {
-  -- Sources
-  {'hrsh7th/cmp-buffer'},
-  {'hrsh7th/cmp-path'},
-  {'saadparwaiz1/cmp_luasnip'},
-  {'hrsh7th/cmp-nvim-lsp'},
-
-  -- Snippets
-  {'L3MON4D3/LuaSnip'},
-  {'rafamadriz/friendly-snippets'},
-}
-
-Plugin.event = 'InsertEnter'
-
-function Plugin.config()
+event = 'InsertEnter'
   vim.opt.completeopt = {'menu', 'menuone', 'noselect'}
 
   local cmp = require('cmp')
   local luasnip = require('luasnip')
-
-  require('luasnip.loaders.from_vscode').lazy_load()
 
   local select_opts = {behavior = cmp.SelectBehavior.Select}
 
@@ -86,17 +69,7 @@ function Plugin.config()
         end
       end, {'i', 's'}),
 
-      ['<Tab>'] = cmp.mapping(function(fallback)
-        local col = vim.fn.col('.') - 1
 
-        if cmp.visible() then
-          cmp.select_next_item(select_opts)
-        elseif col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') then
-          fallback()
-        else
-          cmp.complete()
-        end
-      end, {'i', 's'}),
 
       ['<S-Tab>'] = cmp.mapping(function(fallback)
         if cmp.visible() then
@@ -107,6 +80,4 @@ function Plugin.config()
       end, {'i', 's'}),
     },
   })
-end
 
-return Plugin

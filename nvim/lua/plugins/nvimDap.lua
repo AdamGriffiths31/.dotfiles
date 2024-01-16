@@ -10,6 +10,7 @@ vim.keymap.set("n", "<leader>dt", ":lua require'dap-go'.debug_test()<CR>")
 
 require("dapui").setup()
 require('dap-go').setup()
+require('dap.ext.vscode').load_launchjs(nil,{})
 
 --go install github.com/go-delve/delve/cmd/dlv@latest
 
