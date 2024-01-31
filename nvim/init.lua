@@ -12,6 +12,7 @@ load('plugins.treesitter')
 load('plugins.nvimDap')
 load('plugins.fugitive')
 load('plugins.colorscheme')
+load('plugins.trouble')
 
 vim.cmd [[autocmd BufWritePre <buffer> lua vim.lsp.buf.format()]]
 vim.cmd [[autocmd BufWritePre * lua vim.lsp.buf.format()]]

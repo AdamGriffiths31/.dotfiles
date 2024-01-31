@@ -52,20 +52,21 @@ local sign = function(opts)
     })
 end
 
-sign({ name = 'DiagnosticSignError', text = '✘' })
-sign({ name = 'DiagnosticSignWarn', text = '▲' })
-sign({ name = 'DiagnosticSignHint', text = '⚑' })
-sign({ name = 'DiagnosticSignInfo', text = '»' })
+sign({ name = 'DiagnosticSignError', text = 'E' })
+sign({ name = 'DiagnosticSignWarn', text = 'W' })
+sign({ name = 'DiagnosticSignHint', text = 'H' })
+sign({ name = 'DiagnosticSignInfo', text = 'I' })
 
 -- See :help vim.diagnostic.config()
 vim.diagnostic.config({
-    virtual_text = {
-        prefix = "✘"
-    },
-    severity_sort = true,
+    -- update_in_insert = true,
     float = {
-        border = 'rounded',
-        source = 'always',
+        focusable = false,
+        style = "minimal",
+        border = "rounded",
+        source = "always",
+        header = "",
+        prefix = "",
     },
 })
 
