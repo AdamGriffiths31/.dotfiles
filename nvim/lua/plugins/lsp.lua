@@ -1,13 +1,14 @@
-vim.api.nvim_create_autocmd('LspAttach', {
-    desc = 'LSP actions',
-    callback = function(event)
+return {
+  'neovim/nvim-lspconfig',
+  dependencies = { 'williamboman/mason-lspconfig.nvim' },
+  config = function()
+    vim.api.nvim_create_autocmd('LspAttach', {
+      desc = 'LSP actions',
+      callback = function(event)
         local bufmap = function(mode, lhs, rhs)
-            local opts = { buffer = true }
-            vim.keymap.set(mode, lhs, rhs, opts)
+          local opts = { buffer = true }
+          vim.keymap.set(mode, lhs, rhs, opts)
         end
-
-        -- You can search each function in the help page.
-        -- For example :help vim.lsp.buf.hover()
 
         bufmap('n', 'K', '<cmd>lua vim.lsp.buf.hover()<cr>')
         bufmap('n', 'gd', '<cmd>lua vim.lsp.buf.definition()<cr>')
@@ -20,139 +21,130 @@ vim.api.nvim_create_autocmd('LspAttach', {
         bufmap('n', 'gl', '<cmd>lua vim.diagnostic.open_float()<cr>')
         bufmap('n', '[d', '<cmd>lua vim.diagnostic.goto_prev()<cr>')
         bufmap('n', ']d', '<cmd>lua vim.diagnostic.goto_next()<cr>')
-    end
-})
-
-require('mason').setup()
-
-local lsp_capabilities = require('cmp_nvim_lsp').default_capabilities()
-local lspconfig = require('lspconfig')
-local lsp_defaults = lspconfig.util.default_config
-
-lsp_defaults.capabilities = vim.tbl_deep_extend(
-    'force',
-    lsp_defaults.capabilities,
-    require('cmp_nvim_lsp').default_capabilities()
-)
-
-require('mason-lspconfig').setup_handlers({
-    function(server_name)
-        lspconfig[server_name].setup({
-            capabilities = lsp_capabilities,
-        })
-    end,
-})
-
-local sign = function(opts)
-    -- See :help sign_define()
-    vim.fn.sign_define(opts.name, {
-        texthl = opts.name,
-        text = opts.text,
-        numhl = ''
+      end
     })
-end
 
-sign({ name = 'DiagnosticSignError', text = 'E' })
-sign({ name = 'DiagnosticSignWarn', text = 'W' })
-sign({ name = 'DiagnosticSignHint', text = 'H' })
-sign({ name = 'DiagnosticSignInfo', text = 'I' })
-
--- See :help vim.diagnostic.config()
-vim.diagnostic.config({
-    -- update_in_insert = true,
-    float = {
+    vim.diagnostic.config({
+      virtual_text = {
+        prefix = '●',
+        source = "if_many",
+        spacing = 2,
+        format = function(diagnostic)
+          return diagnostic.message
+        end,
+      },
+      signs = {
+        text = {
+          [vim.diagnostic.severity.ERROR] = '✗',
+          [vim.diagnostic.severity.WARN] = '⚠',
+          [vim.diagnostic.severity.HINT] = '💡',
+          [vim.diagnostic.severity.INFO] = 'ⓘ',
+        },
+      },
+      float = {
         focusable = false,
         style = "minimal",
         border = "rounded",
         source = "always",
         header = "",
         prefix = "",
-    },
-})
+      },
+    })
 
-vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
-    vim.lsp.handlers.hover,
-    { border = 'rounded' }
-)
+    vim.lsp.handlers['textDocument/hover'] = vim.lsp.with(
+      vim.lsp.handlers.hover,
+      { border = 'rounded' }
+    )
 
-vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
-    vim.lsp.handlers.signature_help,
-    { border = 'rounded' }
-)
+    vim.lsp.handlers['textDocument/signatureHelp'] = vim.lsp.with(
+      vim.lsp.handlers.signature_help,
+      { border = 'rounded' }
+    )
 
-local servers = {
-    lua_ls = {
-        Lua = {
+    local servers = {
+      lua_ls = {
+        settings = {
+          Lua = {
             diagnostics = {
-                -- Get the language server to recognize the `vim` global
-                globals = { 'vim' },
+              globals = { 'vim' },
             },
             workspace = {
-                -- Make the server aware of Neovim runtime files
-                library = vim.api.nvim_get_runtime_file("", true),
+              library = vim.api.nvim_get_runtime_file("", true),
             },
-            -- Do not send telemetry data containing a randomized but unique identifier
             telemetry = {
-                enable = false,
+              enable = false,
             },
+          },
         },
-    },
-    gopls = {
+      },
+      gopls = {
         settings = {
-            gopls = {
-                codelenses = { test = true },
-                hints = inlays and {
-                    assignVariableTypes = true,
-                    compositeLiteralFields = true,
-                    compositeLiteralTypes = true,
-                    constantValues = true,
-                    functionTypeParameters = true,
-                    parameterNames = true,
-                    rangeVariableTypes = true,
-                } or nil,
+          gopls = {
+            codelenses = { test = true },
+            gofumpt = true,
+            ["formatting.gofumpt"] = true,
+            ["ui.completion.usePlaceholders"] = true,
+            ["ui.diagnostic.staticcheck"] = true,
+            ["ui.inlayhint.hints"] = {
+              assignVariableTypes = true,
+              compositeLiteralFields = true,
+              compositeLiteralTypes = true,
+              constantValues = true,
+              functionTypeParameters = true,
+              parameterNames = true,
+              rangeVariableTypes = true,
             },
+          },
         },
+      }
     }
-}
 
-local custom_init = function(client)
-    client.config.flags = client.config.flags or {}
-    client.config.flags.allow_incremental_sync = true
-end
-
-local updated_capabilities = vim.lsp.protocol.make_client_capabilities()
-updated_capabilities.textDocument.completion.completionItem.snippetSupport = true
-updated_capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
-
--- Completion configuration
-vim.tbl_deep_extend("force", updated_capabilities, require("cmp_nvim_lsp").default_capabilities())
-updated_capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
-
-updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
-
-require("mason").setup()
-require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "gopls" },
-}
-
-
-local setup_server = function(server, config)
-    if not config then
-        return
+    local custom_init = function(client)
+      client.config.flags = client.config.flags or {}
+      client.config.flags.allow_incremental_sync = true
     end
 
-    if type(config) ~= "table" then
-        config = {}
+    local updated_capabilities = vim.lsp.protocol.make_client_capabilities()
+    updated_capabilities.textDocument.completion.completionItem.snippetSupport = true
+    updated_capabilities.workspace.didChangeWatchedFiles.dynamicRegistration = false
+
+    local ok_cmp_lsp, cmp_nvim_lsp = pcall(require, "cmp_nvim_lsp")
+    if ok_cmp_lsp then
+      updated_capabilities = vim.tbl_deep_extend("force", updated_capabilities, cmp_nvim_lsp.default_capabilities())
+    end
+    updated_capabilities.textDocument.completion.completionItem.insertReplaceSupport = false
+    updated_capabilities.textDocument.codeLens = { dynamicRegistration = false }
+
+    local ok_mason_lsp, mason_lspconfig = pcall(require, "mason-lspconfig")
+    if not ok_mason_lsp then
+      vim.notify("mason-lspconfig not found", vim.log.levels.ERROR)
+      return
     end
 
-    config = vim.tbl_deep_extend("force", {
-        on_init = custom_init,
-        capabilities = updated_capabilities,
-    }, config)
+    local ok_lspconfig, lspconfig = pcall(require, 'lspconfig')
+    if not ok_lspconfig then
+      vim.notify("nvim-lspconfig not found", vim.log.levels.ERROR)
+      return
+    end
 
-    lspconfig[server].setup(config)
-end
+    mason_lspconfig.setup({
+      ensure_installed = { "lua_ls", "gopls" },
+      handlers = {
+        function(server_name)
+          local config = servers[server_name] or {}
+          
+          if type(config) ~= "table" then
+            config = {}
+          end
 
-for server, config in pairs(servers) do
-    setup_server(server, config)
-end
+          config = vim.tbl_deep_extend("force", {
+            on_init = custom_init,
+            capabilities = updated_capabilities,
+          }, config)
+
+          lspconfig[server_name].setup(config)
+        end,
+      }
+    })
+  end
+}
