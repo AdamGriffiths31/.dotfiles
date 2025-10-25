@@ -8,6 +8,12 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     callback = function(event)
         -- Only format if LSP client is attached and supports formatting
         local bufnr = event.buf
+
+        -- Check if buffer is valid and loaded
+        if not vim.api.nvim_buf_is_valid(bufnr) or not vim.api.nvim_buf_is_loaded(bufnr) then
+            return
+        end
+
         local clients = vim.lsp.get_active_clients({ bufnr = bufnr })
         
         for _, client in pairs(clients) do
@@ -33,6 +39,12 @@ vim.api.nvim_create_autocmd('BufWritePre', {
     pattern = '*.go',
     callback = function(event)
         local bufnr = event.buf
+
+        -- Check if buffer is valid and loaded
+        if not vim.api.nvim_buf_is_valid(bufnr) or not vim.api.nvim_buf_is_loaded(bufnr) then
+            return
+        end
+
         local params = vim.lsp.util.make_range_params()
         params.context = {only = {"source.organizeImports"}}
         

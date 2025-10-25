@@ -74,6 +74,9 @@ return {
             telemetry = {
               enable = false,
             },
+            format = {
+              enable = false,  -- Disable lua_ls formatting to avoid stylua warnings
+            },
           },
         },
       },
@@ -93,6 +96,53 @@ return {
               functionTypeParameters = true,
               parameterNames = true,
               rangeVariableTypes = true,
+            },
+          },
+        },
+      },
+      jdtls = {
+        settings = {
+          java = {
+            signatureHelp = { enabled = true },
+            contentProvider = { preferred = "fernflower" },
+            completion = {
+              favoriteStaticMembers = {
+                "org.junit.Assert.*",
+                "org.junit.jupiter.api.Assertions.*",
+                "org.mockito.Mockito.*",
+              },
+              filteredTypes = {
+                "com.sun.*",
+                "io.micrometer.shaded.*",
+                "java.awt.*",
+                "jdk.*",
+                "sun.*",
+              },
+            },
+            sources = {
+              organizeImports = {
+                starThreshold = 9999,
+                staticStarThreshold = 9999,
+              },
+            },
+            codeGeneration = {
+              toString = {
+                template = "${object.className}{${member.name()}=${member.value}, ${otherMembers}}",
+              },
+              useBlocks = true,
+            },
+            configuration = {
+              runtimes = {
+                -- Uncomment and configure if you have multiple Java versions
+                -- {
+                --   name = "JavaSE-11",
+                --   path = "/usr/lib/jvm/java-11-openjdk",
+                -- },
+                -- {
+                --   name = "JavaSE-17",
+                --   path = "/usr/lib/jvm/java-17-openjdk",
+                -- },
+              },
             },
           },
         },
@@ -128,7 +178,7 @@ return {
     end
 
     mason_lspconfig.setup({
-      ensure_installed = { "lua_ls", "gopls" },
+      ensure_installed = { "lua_ls", "gopls", "jdtls" },
       handlers = {
         function(server_name)
           local config = servers[server_name] or {}
